@@ -28,7 +28,18 @@ Pedidos envolvendo progresso de projetos, marcos, entregáveis, compartilhamento
 ```
 SKILL_Adm_Projetos/
 ├── SKILL.md    # Definição da skill (frontmatter + instruções completas)
-└── README.md   # Este arquivo
+├── README.md   # Este arquivo
+└── app/        # Aplicação de referência: portal responsivo construído com a skill
+```
+
+## Aplicação de referência (`app/`)
+
+O diretório [`app/`](app/README.md) contém um portal completo e responsivo construído a partir desta skill — Node.js puro (≥ 22.5, sem dependências externas), SQLite nativo, autenticação por sessão, área do cliente, administração e suíte de testes:
+
+```bash
+cd app
+npm start   # http://localhost:3000
+npm test    # suíte de QA da camada de procedures
 ```
 
 ## Como instalar

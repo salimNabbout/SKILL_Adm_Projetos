@@ -1,0 +1,13 @@
+{
+  "name": "portal-status-projetos",
+  "version": "1.0.0",
+  "description": "Portal de status de projetos: área do cliente restrita e centro de controle administrativo (PT-BR).",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "start": "node --no-warnings server.js",
+    "test": "node --no-warnings --test tests/*.test.js"
+  }
+}
