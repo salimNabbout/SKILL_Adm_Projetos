@@ -1,0 +1,11 @@
+{
+  "name": "portal-status-projetos-netlify",
+  "version": "1.0.0",
+  "description": "Deploy do Portal de Projetos no Netlify (Functions + Netlify Database + Blobs).",
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "^11.0.1",
+    "@netlify/database": "^2.0.0",
+    "@netlify/functions": "^6.0.0"
+  }
+}

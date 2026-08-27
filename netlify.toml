@@ -1,0 +1,14 @@
+# Deploy do Portal de Projetos no Netlify:
+# - SPA estática servida de app/public
+# - API portada para Netlify Function (netlify/functions/api) em /api/*
+# - Banco: Netlify Database (Postgres provisionado automaticamente)
+# - Arquivos de documentos: Netlify Blobs
+[build]
+  publish = "app/public"
+  command = "echo 'sem etapa de build'"
+
+# SPA: rotas desconhecidas caem no shell; o cliente renderiza a página (inclusive a 404).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
