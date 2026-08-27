@@ -53,6 +53,57 @@
     if (input) input.addEventListener('input', () => { input.value = maskPhoneBR(input.value); });
   }
 
+  // ------------------------------------------------------------ tema claro/escuro
+
+  const THEME_KEY = 'portal-theme';
+
+  function systemPrefersDark() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function storedTheme() {
+    try {
+      const value = localStorage.getItem(THEME_KEY);
+      return value === 'dark' || value === 'light' ? value : null;
+    } catch { return null; }
+  }
+  function effectiveTheme() {
+    return storedTheme() || (systemPrefersDark() ? 'dark' : 'light');
+  }
+  function applyTheme(theme) {
+    if (theme) document.documentElement.dataset.theme = theme;
+    else delete document.documentElement.dataset.theme;
+    try {
+      if (theme) localStorage.setItem(THEME_KEY, theme);
+      else localStorage.removeItem(THEME_KEY);
+    } catch { /* preferência não persistida */ }
+  }
+  function themeButtonHtml() {
+    const dark = effectiveTheme() === 'dark';
+    const label = dark ? 'Ativar tema claro' : 'Ativar tema escuro';
+    return `<button class="btn btn-ghost btn-sm theme-toggle" id="theme-btn"
+      title="${label}" aria-label="${label}">${dark ? '☀️' : '🌙'}</button>`;
+  }
+  function bindThemeToggle() {
+    const btn = document.getElementById('theme-btn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+      // Escolher o mesmo tema do sistema volta ao modo automático.
+      applyTheme(next === (systemPrefersDark() ? 'dark' : 'light') ? null : next);
+      const dark = effectiveTheme() === 'dark';
+      btn.textContent = dark ? '☀️' : '🌙';
+      const label = dark ? 'Ativar tema claro' : 'Ativar tema escuro';
+      btn.title = label;
+      btn.setAttribute('aria-label', label);
+    });
+  }
+  if (window.matchMedia) {
+    // No modo automático, acompanha mudanças de tema do sistema em tempo real.
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (!storedTheme()) render();
+    });
+  }
+
   // ------------------------------------------------------------ toasts + confirmação
 
   function toast(message, kind = 'error') {
@@ -154,6 +205,7 @@
     } else {
       navLinks.push(`<a data-nav href="/acessar" class="btn btn-sm">Acessar portal</a>`);
     }
+    navLinks.push(themeButtonHtml());
     app.innerHTML = `
       <header class="topbar">
         <div class="topbar-inner">
@@ -162,6 +214,7 @@
         </div>
       </header>
       <main class="page">${content}</main>`;
+    bindThemeToggle();
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
       logoutBtn.addEventListener('click', async () => {

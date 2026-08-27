@@ -1,4 +1,7 @@
-/* Tema central do portal: troque a paleta aqui sem reescrever componentes. */
+/* Tema central do portal: troque a paleta aqui sem reescrever componentes.
+   Três estados de tema: claro (padrão), escuro e automático (segue o sistema).
+   A escolha explícita é gravada em data-theme no <html>; sem atributo, vale
+   a preferência do sistema via prefers-color-scheme. */
 :root {
   --brand: #2f6f5e;
   --brand-strong: #24574a;
@@ -14,7 +17,72 @@
   --warn: #a3661a;
   --bad: #a13c2f;
   --info: #33566e;
+  --toast-bg: #1f2a28;
+  --toast-ink: #ffffff;
+  --badge-info-bg: #eef1f5;
+  --badge-ok-bg: #e6f1ee;
+  --badge-warn-bg: #f9efe0;
+  --badge-bad-bg: #f7e8e5;
+  --badge-muted-bg: #ececec;
+  --badge-muted-ink: #555555;
+  --backdrop: rgba(31, 42, 40, .45);
+  color-scheme: light;
   font-size: 16px;
+}
+
+/* Paleta escura: aplicada pela escolha explícita (data-theme="dark") ou,
+   sem escolha explícita, pela preferência do sistema. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #3f8a75;
+    --brand-strong: #66b09b;
+    --brand-soft: #1e332d;
+    --ink: #e5ecea;
+    --ink-soft: #9fb0ac;
+    --surface: #1c2523;
+    --surface-alt: #121917;
+    --line: #2d3b38;
+    --shadow: 0 8px 24px rgba(0, 0, 0, .4);
+    --ok: #58a98f;
+    --warn: #d0a05a;
+    --bad: #d98a7c;
+    --info: #8fb3cd;
+    --toast-bg: #2b3835;
+    --toast-ink: #e5ecea;
+    --badge-info-bg: #253239;
+    --badge-ok-bg: #1e332d;
+    --badge-warn-bg: #362c1b;
+    --badge-bad-bg: #3a2622;
+    --badge-muted-bg: #2a3230;
+    --badge-muted-ink: #a9b5b2;
+    --backdrop: rgba(0, 0, 0, .6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --brand: #3f8a75;
+  --brand-strong: #66b09b;
+  --brand-soft: #1e332d;
+  --ink: #e5ecea;
+  --ink-soft: #9fb0ac;
+  --surface: #1c2523;
+  --surface-alt: #121917;
+  --line: #2d3b38;
+  --shadow: 0 8px 24px rgba(0, 0, 0, .4);
+  --ok: #58a98f;
+  --warn: #d0a05a;
+  --bad: #d98a7c;
+  --info: #8fb3cd;
+  --toast-bg: #2b3835;
+  --toast-ink: #e5ecea;
+  --badge-info-bg: #253239;
+  --badge-ok-bg: #1e332d;
+  --badge-warn-bg: #362c1b;
+  --badge-bad-bg: #3a2622;
+  --badge-muted-bg: #2a3230;
+  --badge-muted-ink: #a9b5b2;
+  --backdrop: rgba(0, 0, 0, .6);
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -52,6 +120,7 @@ p { margin: .3rem 0; }
 }
 .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
 .user-chip { color: var(--ink-soft); font-size: .88rem; }
+.theme-toggle { font-size: 1rem; line-height: 1; padding: .45rem .6rem; }
 
 .page { max-width: 1180px; margin: 0 auto; padding: 1.2rem 1rem 3rem; }
 
@@ -98,13 +167,13 @@ p { margin: .3rem 0; }
   padding: .18rem .6rem; white-space: nowrap;
 }
 .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.badge.planning { background: #eef1f5; color: var(--info); }
-.badge.on_track { background: var(--brand-soft); color: var(--ok); }
-.badge.attention { background: #f9efe0; color: var(--warn); }
-.badge.delayed { background: #f7e8e5; color: var(--bad); }
-.badge.paused { background: #ececec; color: #555; }
-.badge.completed { background: var(--brand-soft); color: var(--brand-strong); }
-.badge.inactive { background: #ececec; color: #666; }
+.badge.planning { background: var(--badge-info-bg); color: var(--info); }
+.badge.on_track { background: var(--badge-ok-bg); color: var(--ok); }
+.badge.attention { background: var(--badge-warn-bg); color: var(--warn); }
+.badge.delayed { background: var(--badge-bad-bg); color: var(--bad); }
+.badge.paused { background: var(--badge-muted-bg); color: var(--badge-muted-ink); }
+.badge.completed { background: var(--badge-ok-bg); color: var(--brand-strong); }
+.badge.inactive { background: var(--badge-muted-bg); color: var(--badge-muted-ink); }
 .badge.plain::before { display: none; }
 
 .progress {
@@ -143,16 +212,20 @@ p { margin: .3rem 0; }
 /* ---------- toasts ---------- */
 .toasts { position: fixed; bottom: 1rem; right: 1rem; display: flex; flex-direction: column; gap: .5rem; z-index: 60; max-width: min(92vw, 380px); }
 .toast {
-  background: var(--ink); color: #fff; border-radius: 10px; padding: .65rem .9rem;
+  background: var(--toast-bg); color: var(--toast-ink); border-radius: 10px; padding: .65rem .9rem;
   font-size: .88rem; box-shadow: var(--shadow); animation: toast-in .18s ease;
 }
-.toast.error { background: var(--bad); }
-.toast.success { background: var(--brand-strong); }
+.toast.error { background: var(--bad); color: #fff; }
+.toast.success { background: var(--brand-strong); color: #fff; }
 @keyframes toast-in { from { transform: translateY(8px); opacity: 0; } }
 
 /* ---------- diálogo ---------- */
-.confirm-dialog { border: none; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.2rem 1.4rem; max-width: 420px; width: calc(100vw - 2rem); }
-.confirm-dialog::backdrop { background: rgba(31, 42, 40, .45); }
+.confirm-dialog {
+  border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 1.2rem 1.4rem; max-width: 420px; width: calc(100vw - 2rem);
+  background: var(--surface); color: var(--ink);
+}
+.confirm-dialog::backdrop { background: var(--backdrop); }
 .dialog-actions { display: flex; justify-content: flex-end; gap: .6rem; margin-top: 1rem; }
 
 /* ---------- landing ---------- */
@@ -162,8 +235,8 @@ p { margin: .3rem 0; }
 }
 .hero h1 { font-size: clamp(1.6rem, 4vw, 2.4rem); max-width: 34rem; }
 .hero p { max-width: 36rem; opacity: .92; }
-.hero .btn { background: #fff; color: var(--brand-strong); margin-top: 1rem; }
-.hero .btn:hover { background: var(--brand-soft); }
+.hero .btn { background: #fff; color: #24574a; margin-top: 1rem; }
+.hero .btn:hover { background: #e6f1ee; }
 .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
 .feature-grid .card { margin: 0; }
 .feature-icon { font-size: 1.4rem; }

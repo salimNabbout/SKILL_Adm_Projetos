@@ -11,6 +11,7 @@ Aplicação web **responsiva** construída a partir da skill [`project-status-po
 - **Uploads seguros**: validação de nome, tipo e tamanho (máx. 5 MB) no navegador e no servidor; arquivos em `app/data/storage/projects/{id}/documents/`, banco guarda apenas metadados.
 - **Tela 404 própria**, com a mesma identidade visual do portal.
 - **Responsivo**: layout fluido com grid/flex; painéis empilham em telas estreitas.
+- **Tema claro/escuro**: botão de alternância na barra superior (🌙/☀️). Sem escolha explícita o portal segue o tema do sistema; a escolha manual fica salva no navegador (`localStorage`) e escolher o mesmo tema do sistema volta ao modo automático. Toda a paleta vive em variáveis CSS em `styles.css`.
 
 ## Como executar
 
